@@ -492,10 +492,10 @@ function downloadImage(format) {
         
         if (format === 'png') {
             link.href = canvas.toDataURL('image/png');
-            link.download = 'fake-tweet-repixify.png';
+            link.download = 'fake-tweet-maker.png';
         } else {
             link.href = canvas.toDataURL('image/jpeg', 0.9);
-            link.download = 'fake-tweet-repixify.jpeg';
+            link.download = 'fake-tweet-maker.jpeg';
         }
         
         // Restore buttons
