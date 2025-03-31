@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake Tweet Maker - Forever Free</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f7f9fa;
+            padding: 20px;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+        }
+        
+        .edit-column, .preview-column {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .edit-column {
+            flex: 1;
+            min-width: 320px;
+        }
+        
+        .preview-column {
+            flex: 1;
+            min-width: 320px;
+            background-color: #e7e7e7;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #536471;
+        }
+        
+        input[type="text"], 
+        input[type="number"],
+        input[type="date"],
+        input[type="time"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cfd9de;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .image-upload {
+            border: 1px dashed #cfd9de;
+            border-radius: 5px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .image-upload p {
+            color: #536471;
+            font-size: 14px;
+        }
+        
+        .image-upload input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .preview-header {
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            font-weight: 700;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .tweet-preview {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .tweet-container {
+            padding: 12px 16px;
+            width: 100%;
+        }
+        
+        .tweet-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .tweet-profile-image {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin-right: 12px;
+            overflow: hidden;
+        }
+        
+        .tweet-profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .tweet-profile-info {
+            flex: 1;
+        }
+        
+        .tweet-name {
+            font-weight: 700;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .tweet-username {
+            color: #536471;
+            font-size: 15px;
+        }
+        
+        .tweet-content {
+            font-size: 16px;
+            line-height: 1.4;
+            margin: 5px 0 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .tweet-image-container {
+            width: 100%;
+            margin: 10px 0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .tweet-image-container img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+        }
+        
+        .tweet-time {
+            color: #536471;
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+        
+        .tweet-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #eff3f4;
+        }
+        
+        .tweet-stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #536471;
+            font-size: 13px;
+        }
+        
+        .tweet-stat svg {
+            width: 18px;
+            height: 18px;
+            fill: #536471;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .action-button {
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .action-button.download-png {
+            background-color: #1d9bf0;
+            color: white;
+        }
+        
+        .action-button.download-jpeg {
+            background-color: #00ba7c;
+            color: white;
+        }
+        
+        .action-button.copy-image {
+            background-color: #f7991d;
+            color: white;
+        }
+        
+        .action-button:hover {
+            opacity: 0.9;
+        }
+        
+        .tweet-light {
+            background-color: #ffffff;
+            color: #0f1419;
+        }
+        
+        .tweet-light .tweet-stats {
+            border-top-color: #eff3f4;
+        }
+        
+        .tweet-dim {
+            background-color: #15202b;
+            color: #ffffff;
+        }
+        
+        .tweet-dim .tweet-username,
+        .tweet-dim .tweet-time,
+        .tweet-dim .tweet-stat {
+            color: #8899a6;
+        }
+        
+        .tweet-dim .tweet-stats {
+            border-top-color: #38444d;
+        }
+        
+        .tweet-dim .tweet-stat svg {
+            fill: #8899a6;
+        }
+        
+        .tweet-dark {
+            background-color: #000000;
+            color: #ffffff;
+        }
+        
+        .tweet-dark .tweet-username,
+        .tweet-dark .tweet-time,
+        .tweet-dark .tweet-stat {
+            color: #8899a6;
+        }
+        
+        .tweet-dark .tweet-stats {
+            border-top-color: #2f3336;
+        }
+        
+        .tweet-dark .tweet-stat svg {
+            fill: #8899a6;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .inline-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .inline-group .form-group {
+            flex: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .preview-column {
+                order: -1; /* Move preview to top on mobile */
+            }
+            
+            .edit-column, .preview-column {
+                width: 100%;
+            }
+            
+            .inline-group {
+                flex-direction: column;
+            }
+        }
+
+
+        /* Improve the display of the upload area */
+        .image-upload {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .image-upload:hover {
+            background-color: #f7f9fa;
+        }
+
+        .upload-preview {
+            position: relative;
+            z-index: 5;
+        }
+
+        /* Effect when dragging file */
+        .image-upload.drag-over {
+            background-color: #e8f5fe;
+            border-color: #1da1f2;
+        }
+
+        /* Format for bookmark when selected */
+        .tweet-stat.bookmarked svg {
+            fill: #1d9bf0 !important;
+        }
+
+        .tweet-stat.bookmarked {
+            color: #1d9bf0 !important;
+        }
+
+        /* Add smooth transitions to effects */
+        .tweet-stat {
+            transition: color 0.2s ease;
+        }
+
+        .tweet-stat svg {
+            transition: fill 0.2s ease;
+        }
+
+        /* CSS to display placeholder background images correctly */
+        #profileImagePreview, #tweetImagePreview {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Improved display for upload image preview */
+        .upload-preview {
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background-color: #f7f9fa;
+        }
+
+        /* Improve display for bookmarks */
+        #bookmarkIcon.active path {
+            fill: #1d9bf0;
+        }
+
+        /* Customization for download and copy buttons */
+        .action-buttons {
+            margin-top: 20px;
+        }
+
+        .action-button {
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .action-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Display uploaded images in the upload area */
+        .image-upload.has-image p {
+            display: none;
+        }
+
+        .image-upload-thumbnail {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .image-upload-thumbnail img {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 8px;
+            border: 2px solid #cfd9de;
+            object-fit: cover;
+        }
+
+        .image-upload-thumbnail p {
+            font-size: 12px;
+            margin-top: 5px;
+            color: #536471;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    
+        /* Header */
+        .site-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            padding: 20px;
+        }
+
+        .site-header h1 {
+            font-size: 2.8rem;
+            color: #1d9bf0;
+            margin-bottom: 10px;
+        }
+
+        .slogan {
+            font-size: 1.2rem;
+            color: #536471;
+            font-weight: 300;
+        }
+
+        /* Info Sections */
+        .info-section {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .info-section section {
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #eff3f4;
+        }
+
+        .info-section h2 {
+            font-size: 1.8rem;
+            color: #0f1419;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #1d9bf0;
+            display: inline-block;
+        }
+
+        .info-section h3 {
+            font-size: 1.4rem;
+            color: #0f1419;
+            margin: 25px 0 15px;
+        }
+
+        .info-section p, .info-section li {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #536471;
+            margin-bottom: 15px;
+        }
+
+        .info-section ul, .info-section ol {
+            margin-left: 25px;
+            margin-bottom: 20px;
+        }
+
+        .info-section li {
+            margin-bottom: 10px;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .feature {
+            background-color: #f7f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature h3 {
+            font-size: 1.2rem;
+            color: #1d9bf0;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .feature p {
+            margin-bottom: 0;
+            font-size: 1rem;
+        }
+
+        /* FAQ */
+        .faq-item {
+            margin-bottom: 30px;
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .faq-item h3 {
+            color: #0f1419;
+            font-size: 1.3rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .faq-item p {
+            margin-top: 0;
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid #eff3f4;
+            margin-top: 50px;
+        }
+
+        .site-footer p {
+            font-size: 0.9rem;
+            color: #536471;
+            margin: 5px 0;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .site-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .slogan {
+                font-size: 1rem;
+            }
+            
+            .info-section h2 {
+                font-size: 1.6rem;
+            }
+            
+            .info-section h3 {
+                font-size: 1.3rem;
+            }
+            
+            .info-section p, .info-section li {
+                font-size: 1rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <h1>Fake Tweet Maker</h1>
+        <p class="slogan">Create realistic-looking tweets in seconds — no coding required.</p>
+    </header>
+    <div class="container">
+        <div class="edit-column">
+            <h1>Edit Tweet</h1>
+            
+            <div class="form-group">
+                <label for="background">Background:</label>
+                <select id="background">
+                    <option value="light">Light</option>
+                    <option value="dim">Dim</option>
+                    <option value="dark">Dark</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="badge">Badge:</label>
+                <select id="badge">
+                    <option value="none">None</option>
+                    <option value="blue" selected>Blue</option>
+                    <option value="grey">Grey</option>
+                    <option value="yellow">Yellow</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="profileImage">Profile Picture:</label>
+                <div class="image-upload" id="profileImageUpload">
+                    <p>Drag 'n' drop some files here, or click to select file (Max Size: 3MB)</p>
+                    <input type="file" id="profileImage" accept="image/*">
+                    <div class="image-upload-thumbnail" id="profileImageThumbnail" style="display:none;">
+                        <img src="" alt="Preview">
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="inline-group">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" value="Elon Musk">
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" value="elonmusk">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="tweet">Tweet:</label>
+                <textarea id="tweet">Welcome to Fake Tweet Maker! Your one stop solution for free online tools ❤</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="tweetImage">Tweet Image:</label>
+                <div class="image-upload" id="tweetImageUpload">
+                    <p>Drag 'n' drop some files here, or click to select file (Max Size: 3MB)</p>
+                    <input type="file" id="tweetImage" accept="image/*">
+                    <div class="image-upload-thumbnail" id="tweetImageThumbnail" style="display:none;">
+                        <img src="" alt="Preview">
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="inline-group">
+                <div class="form-group">
+                    <label for="date">Date:</label>
+                    <input type="date" id="date">
+                </div>
+                
+                <div class="form-group">
+                    <label for="time">Time:</label>
+                    <input type="time" id="time">
+                </div>
+            </div>
+            
+            <div class="inline-group">
+                <div class="form-group">
+                    <label for="likes">Likes:</label>
+                    <input type="number" id="likes" value="30">
+                </div>
+                
+                <div class="form-group">
+                    <label for="retweets">Retweets:</label>
+                    <input type="number" id="retweets" value="25">
+                </div>
+            </div>
+            
+            <div class="inline-group">
+                <div class="form-group">
+                    <label for="replies">Replies:</label>
+                    <input type="number" id="replies" value="18">
+                </div>
+                
+                <div class="form-group">
+                    <label for="views">Views:</label>
+                    <input type="number" id="views" value="20">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="bookmarks">Bookmarks:</label>
+                <div class="inline-group">
+                    <input type="number" id="bookmarks" value="30">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="bookmarked" checked>
+                        <label for="bookmarked">Bookmarked</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="preview-column">
+            <h1 class="preview-header">Tweet Preview</h1>
+            
+            <div class="tweet-preview">
+                <div class="tweet-container tweet-light" id="tweetContainer">
+                    <div class="tweet-header">
+                        <div class="tweet-profile-image">
+                            <img id="profileImagePreview" src="placeholder.png" alt="Profile Image">
+                        </div>
+                        <div class="tweet-profile-info">
+                            <div class="tweet-name">
+                                <span id="namePreview">Repixify</span>
+                                <span id="badgePreview">
+                                    <svg viewBox="0 0 24 24" width="21" height="21" aria-label="Verified account" role="img">
+                                        <path fill="#1DA1F2" d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .494.083.964.237 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z"></path>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="tweet-username">@<span id="usernamePreview">repixify</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="tweet-content" id="tweetContentPreview">
+                        Welcome to Repixify! Your one stop solution for all online tools ❤
+                    </div>
+                    
+                    <div class="tweet-image-container" id="tweetImageContainer" style="display:none;">
+                        <img id="tweetImagePreview" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UyZThmMCIvPjxwYXRoIGQ9Ik0zNSwzNSBMNjUsNjUgTTY1LDM1IEwzNSw2NSIgc3Ryb2tlPSIjOTRhM2I4IiBzdHJva2Utd2lkdGg9IjUiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIzMCIgc3Ryb2tlPSIjOTRhM2I4IiBzdHJva2Utd2lkdGg9IjUiIGZpbGw9Im5vbmUiLz48L3N2Zz4=" alt="Tweet Image">
+                    </div>
+                    
+                    <div class="tweet-time">
+                        <span id="timePreview">12:00</span> · <span id="datePreview">Mar 31, 2025</span> · <span id="viewsPreview">20</span> Views
+                    </div>
+                    
+                    <div class="tweet-stats">
+                        <div class="tweet-stat" title="Replies">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <g><path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path></g>
+                            </svg>
+                            <span id="repliesPreview">18</span>
+                        </div>
+                        <div class="tweet-stat" title="Retweets">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <g><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path></g>
+                            </svg>
+                            <span id="retweetsPreview">25</span>
+                        </div>
+                        <div class="tweet-stat" title="Likes">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <g><path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path></g>
+                            </svg>
+                            <span id="likesPreview">30</span>
+                        </div>
+                        <div class="tweet-stat" title="Bookmarks" id="bookmarkStat">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" id="bookmarkIcon">
+                                <g><path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"></path></g>
+                            </svg>
+                            <span id="bookmarksPreview">30</span>
+                        </div>
+                        <div class="tweet-stat" title="Share">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <g><path d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z"></path></g>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-button download-png" id="downloadPNG">
+                    <i class="fas fa-download"></i> Download PNG
+                </button>
+                <button class="action-button download-jpeg" id="downloadJPEG">
+                    <i class="fas fa-download"></i> Download JPEG
+                </button>
+                <button class="action-button copy-image" id="copyImage">
+                    <i class="fas fa-copy"></i> Copy Image
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="info-section">
+        <section id="about">
+            <h2>What is a Fake Tweet Maker?</h2>
+            <p>Fake Tweet Maker is an online tool that allows you to create realistic-looking tweets without actually posting them on Twitter. You can customize every aspect of the tweet, including the profile picture, username, content, engagement metrics, and more. It's perfect for creating mockups, educational content, or just having fun.</p>
+        </section>
+    
+        <section id="how-to">
+            <h2>How to generate Tweet using Fake Tweet Generator?</h2>
+            <p>Creating a fake tweet is simple and straightforward:</p>
+            <ol>
+                <li><strong>Customize Profile</strong>: Upload a profile picture and set name and username</li>
+                <li><strong>Craft Your Message</strong>: Write your tweet text and optionally add an image</li>
+                <li><strong>Style the Tweet</strong>: Choose background color (light, dim, or dark) and verification badge type</li>
+                <li><strong>Set Engagement</strong>: Adjust likes, retweets, replies, and other metrics</li>
+                <li><strong>Download or Share</strong>: Save your creation as PNG or JPEG, or copy to clipboard</li>
+            </ol>
+            <p>The preview updates in real-time, so you can see exactly how your tweet will look as you make changes.</p>
+        </section>
+    
+        <section id="policy">
+            <h2>Safe Usage Policy</h2>
+            <p>While Fake Tweet Maker is designed for fun and creative purposes, we encourage responsible use:</p>
+            <ul>
+                <li>This tool is intended for entertainment, educational, and creative content purposes only</li>
+                <li>Do not use to spread misinformation, impersonate others, or deceive people</li>
+                <li>Fake tweets should be clearly labeled as simulations when shared</li>
+                <li>We do not store or collect any images or content you create</li>
+                <li>Users are solely responsible for the content they create and how they use it</li>
+            </ul>
+            <p>Remember: Be creative, but be kind and responsible.</p>
+        </section>
+    
+        <section id="features">
+            <h2>Features of Fake Tweet Maker</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <h3>Realistic Design</h3>
+                    <p>Perfectly mimics Twitter's interface with accurate styling, icons, and layout</p>
+                </div>
+                <div class="feature">
+                    <h3>Customization Options</h3>
+                    <p>Edit every element including profile pic, username, text, images, and engagement metrics</p>
+                </div>
+                <div class="feature">
+                    <h3>Multiple Themes</h3>
+                    <p>Switch between light, dim, and dark modes just like on Twitter</p>
+                </div>
+                <div class="feature">
+                    <h3>Verification Badges</h3>
+                    <p>Add blue, grey, or yellow verification badges to the profile</p>
+                </div>
+                <div class="feature">
+                    <h3>Image Upload</h3>
+                    <p>Include profile pictures and tweet images for enhanced realism</p>
+                </div>
+                <div class="feature">
+                    <h3>Download Options</h3>
+                    <p>Save your creation as PNG or JPEG, or copy directly to clipboard</p>
+                </div>
+            </div>
+        </section>
+    
+        <section id="faq">
+            <h2>Frequently Asked Questions (FAQs)</h2>
+            
+            <div class="faq-item">
+                <h3>Q1. Is it safe and free to use the Fake Tweet Maker tool?</h3>
+                <p>Yes, our Fake Tweet Maker is completely free and safe to use. The tool runs entirely in your browser - we don't store your images or tweet content on our servers. No account or registration is required, and there are no hidden fees or watermarks on downloaded images.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>Q2. What do different color badges in Twitter mean?</h3>
+                <p>Twitter (now X) has three types of verification badges:</p>
+                <ul>
+                    <li><strong>Blue badge</strong>: For subscribers of Twitter Blue / X Premium</li>
+                    <li><strong>Grey badge</strong>: For government accounts and organizations</li>
+                    <li><strong>Yellow/Gold badge</strong>: For businesses and corporate accounts</li>
+                </ul>
+                <p>Our tool lets you simulate all three types to create the most realistic tweets for your needs.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>Q3. How to create a fake tweet that looks authentic and believable?</h3>
+                <p>For maximum authenticity:</p>
+                <ul>
+                    <li>Use real usernames that match the profile picture</li>
+                    <li>Keep engagement numbers realistic (not too high unless it's a celebrity)</li>
+                    <li>Use the correct verification badge type for the account you're simulating</li>
+                    <li>Pay attention to details like date format and time</li>
+                    <li>Match the writing style of the person or brand you're mimicking</li>
+                </ul>
+                <p>Remember to clearly indicate when sharing that the tweet is not real to avoid confusion.</p>
+            </div>
+        </section>
+    
+        <footer class="site-footer">
+            <p>Fake Tweet Maker is intended for entertainment and creative purposes only. All generated content is the responsibility of the user.</p>
+            <p>&copy; 2025 Fake Tweet Maker. Not affiliated with Twitter or X Corp.</p>
+        </footer>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="tweet-maker.js"></script>
+</body>
+</html>
